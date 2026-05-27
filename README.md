@@ -5,7 +5,7 @@ SkyBarber is a modern Full-Stack web application designed for barber shop manage
 ---
 
 ## 🚀 Live Demo & Cloud Deployment
-- **Frontend App:** [https://skybarber.vercel.app](https://skybarber.vercel.app) *(Replace with your actual Vercel link!)*
+- **Frontend App:** [https://skybarber.vercel.app](https://skybarber.vercel.app)
 - **Database Backup Scripts:** Included in root directory as `firestore-schema.json` (NoSQL) and `schema.sql` (Relational SQL).
 
 ---
