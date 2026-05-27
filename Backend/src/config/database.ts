@@ -1,11 +1,13 @@
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
+import admin from 'firebase-admin';
+import path from 'path';
 
-dotenv.config();
+// Dosya yolunu Backend klasörünün kök dizinine bakacak şekilde düzelttik
+const serviceAccountPath = path.resolve(__dirname, '../../firebase-service-account.json');
+// Üstteki yol da hata verirse, riske atmamak için doğrudan kesin konumu şu şekilde de yazabilirsin:
+// const serviceAccountPath = path.resolve(__dirname, '../../firebase-service-account.json');
 
-export const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false // Supabase bağlantısı için gerekli güvenlik ayarı
-    }
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountPath)
 });
+
+export const db = admin.firestore();

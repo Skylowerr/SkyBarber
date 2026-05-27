@@ -13,8 +13,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "pg": "^8.21.0"
+    "firebase-admin": "^12.1.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -22,7 +22,6 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
-    "@types/pg": "^8.20.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   }

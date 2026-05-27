@@ -1,0 +1,18 @@
+# Bağımlılıklar (En büyük yer kaplayan ve yüklenmemesi gereken klasörler)
+node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+
+# Gizli Anahtarlar ve Veritabanı Bilgileri (Çalınmaması gerekenler)
+.env
+Backend/.env
+firebase-service-account.json
+Backend/firebase-service-account.json
+
+# TypeScript Derleme Çıktıları (Sunucu zaten ts-node ile çalışıyor)
+dist/
+Backend/dist/
+
+# Mac İşletim Sisteminin Otomatik Oluşturduğu Gereksiz Dosyalar
+.DS_Store
+*/.DS_Store
