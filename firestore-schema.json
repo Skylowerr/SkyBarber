@@ -1,0 +1,48 @@
+{
+    "description": "SkyBarber NoSQL Firebase Firestore Database Script & Export Schema",
+    "collections": {
+      "users": [
+        {
+          "id": "admin_user_01",
+          "email": "emirhan@gmail.com",
+          "password": "$2b$10$encryptedhashedpasswordversion",
+          "role": "admin",
+          "created_at": "2026-05-27T12:00:00.000Z"
+        },
+        {
+          "id": "customer_user_01",
+          "email": "customer@gmail.com",
+          "password": "$2b$10$customerpasswordhash",
+          "role": "customer",
+          "created_at": "2026-05-27T12:30:00.000Z"
+        }
+      ],
+      "services": [
+        {
+          "id": "srv_01",
+          "name": "Haircut",
+          "price": 250,
+          "created_at": "2026-05-27T13:00:00.000Z"
+        },
+        {
+          "id": "srv_02",
+          "name": "Beard Shaving",
+          "price": 150,
+          "created_at": "2026-05-27T13:05:00.000Z"
+        }
+      ],
+      "appointments": [
+        {
+          "id": "app_01",
+          "serviceId": "srv_01",
+          "serviceName": "Haircut",
+          "price": 250,
+          "date": "2026-05-28",
+          "time": "14:00",
+          "customerEmail": "customer@gmail.com",
+          "status": "confirmed",
+          "created_at": "2026-05-27T15:51:00.000Z"
+        }
+      ]
+    }
+  }

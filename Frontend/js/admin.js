@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const role = localStorage.getItem('userRole');
 
     if (!token || role !== 'admin') {
-        alert('Bu sayfaya erişim yetkiniz yok! Lütfen admin hesabı ile giriş yapın.');
+        alert('You do not have permission to access this page! Please log in with an admin account.');
         window.location.href = 'auth.html';
         return;
     }
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(API_URL);
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Hizmetler getirilemedi.');
+                throw new Error(errorData.error || 'The services could not be fetched.');
             }
 
             const services = await response.json();
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (services.length === 0) {
                 adminServicesList.innerHTML = `
                     <tr>
-                        <td colspan="3" class="text-center py-8 text-sm text-slate-400">Henüz eklenmiş bir hizmet bulunmuyor.</td>
+                        <td colspan="3" class="text-center py-8 text-sm text-slate-400">No services have been added yet.</td>
                     </tr>`;
                 return;
             }
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 adminServicesList.appendChild(tr);
             });
         } catch (error) {
-            console.error('Listeleme Hatası:', error);
+            console.error('Listing Error:', error);
             adminServicesList.innerHTML = `
                 <tr>
-                    <td colspan="3" class="text-center py-8 text-sm text-red-500 font-medium">Hata: ${error.message}</td>
+                    <td colspan="3" class="text-center py-8 text-sm text-red-500 font-medium">Error: ${error.message}</td>
                 </tr>`;
         }
     }
@@ -76,22 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!response.ok) {
                     // Sunucudan veya Firebase'den dönen gerçek hatayı fırlatıyoruz
-                    throw new Error(data.error || 'Hizmet sunucuya kaydedilemedi.');
+                    throw new Error(data.error || 'The service could not be saved to the server.');
                 }
 
-                alert('Hizmet başarıyla veritabanına eklendi!');
+                alert('The service has been successfully added to the database!');
                 addServiceForm.reset();
                 fetchAdminServices(); // Tabloyu anında güncelle
             } catch (error) {
-                console.error('Ekleme Hatası:', error);
-                alert('Ekleme Başarısız! \nDetay: ' + error.message);
+                console.error('Insertion Error:', error);
+                alert('Failed to Add! \nDetail: ' + error.message);
             }
         });
     }
 
     // 4. Hizmet Silme (Delete)
     window.deleteService = async (id) => {
-        if (!confirm('Bu hizmeti veritabanından tamamen silmek istediğinize emin misiniz?')) return;
+        if (!confirm('Are you sure you want to permanently delete this service from the database??')) return;
 
         try {
             const response = await fetch(`${API_URL}/${id}`, {
@@ -99,24 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Hizmet silinemedi.');
+            if (!response.ok) throw new Error(data.error || 'The service could not be deleted.');
 
-            alert('Hizmet başarıyla silindi.');
+            alert('The service was successfully deleted.');
             fetchAdminServices(); // Tabloyu anında güncelle
         } catch (error) {
-            alert('Silme Hatası: ' + error.message);
+            alert('Deletion Error: ' + error.message);
         }
     };
 
     // 5. Hizmet Güncelleme (Update)
     window.editService = async (id, currentName, currentPrice) => {
-        const newName = prompt('Yeni Hizmet Adı:', currentName);
-        const newPrice = prompt('Yeni Fiyat (TL):', currentPrice);
+        const newName = prompt('New Service Name:', currentName);
+        const newPrice = prompt('New Price (TL):', currentPrice);
 
         // İptal edilirse veya boş bırakılırsa işlem yapma
         if (newName === null || newPrice === null) return; 
         if (newName.trim() === '' || newPrice.trim() === '') {
-            alert('Alanlar boş bırakılamaz!');
+            alert('Fields can be empty!');
             return;
         }
 
@@ -128,12 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Hizmet güncellenemedi.');
+            if (!response.ok) throw new Error(data.error || 'The service could not be updated.');
 
-            alert('Hizmet başarıyla güncellendi!');
+            alert('The service has been successfully updated!');
             fetchAdminServices(); // Tabloyu anında güncelle
         } catch (error) {
-            alert('Güncelleme Hatası: ' + error.message);
+            alert('Update Error: ' + error.message);
         }
     };
 

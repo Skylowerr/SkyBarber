@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             servicesGrid.innerHTML = '';
             if (services.length === 0) {
-                servicesGrid.innerHTML = `<p class="text-slate-500 text-center col-span-3 py-8">Hizmet bulunamadı.</p>`;
+                servicesGrid.innerHTML = `<p class="text-slate-500 text-center col-span-3 py-8">Service not found.</p>`;
                 return;
             }
 
@@ -47,12 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">${service.name}</h3>
-                        <p class="text-sm text-slate-500 mt-1">Profesyonel berber hizmeti.</p>
+                        <p class="text-sm text-slate-500 mt-1">Professional Barber Services.</p>
                     </div>
                     <div class="mt-6 flex justify-between items-center">
                         <span class="text-xl font-semibold text-slate-900">${service.price} TL</span>
                         <button onclick="openAppointmentModal('${service.id}', '${service.name}', ${service.price})" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition cursor-pointer">
-                            Randevu Seç
+                            Select an Appointment
                         </button>
                     </div>
                 `;
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openAppointmentModal = (id, name, price) => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Randevu alabilmek için lütfen önce giriş yapın!');
+            alert('Please log in first to schedule an appointment!');
             window.location.href = 'auth.html';
             return;
         }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTitle.innerText = name;
         modalPrice.innerText = `${price} TL`;
         appointmentDateInput.value = '';
-        timeSlotsGrid.innerHTML = '<p class="text-xs text-slate-400 col-span-3">Lütfen önce bir tarih seçin.</p>';
+        timeSlotsGrid.innerHTML = '<p class="text-xs text-slate-400 col-span-3">Please select a date first.</p>';
         modal.classList.remove('hidden');
     };
 
@@ -142,7 +142,7 @@ if (appointmentDateInput) {
             const customerEmail = localStorage.getItem('userEmail') || 'musteri@gmail.com';
 
             if (!date || !selectedTime) {
-                alert('Lütfen tarih ve saat seçimini tamamlayın!');
+                alert('Please complete your date and time selection!');
                 return;
             }
 
@@ -162,16 +162,26 @@ if (appointmentDateInput) {
 
                 const data = await response.json();
 
-                if (!response.ok) throw new Error(data.error || 'Randevu oluşturulamadı.');
+                if (!response.ok) throw new Error(data.error || 'Appointment could not be scheduled.');
 
-                alert('Tebrikler! Randevunuz başarıyla alındı.');
+                alert('Congratulations! Your appointment has been successfully scheduled.');
                 modal.classList.add('hidden');
             } catch (error) {
                 alert(error.message);
             }
         });
     }
-
+    // Frontend/js/main.js dosyasının en altına (fetchServices(); satırından hemen önce) ekle:
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            // Tarayıcıdaki token, email ve rol bilgilerini tamamen temizliyoruz
+            localStorage.clear();
+            alert('Your session has been successfully closed. We look forward to seeing you again.!');
+            // Kullanıcıyı giriş sayfasına yönlendiriyoruz
+            window.location.href = 'auth.html';
+        });
+    }
     if (btnSearch) btnSearch.addEventListener('click', fetchServices);
     if (sortSelect) sortSelect.addEventListener('change', fetchServices);
     fetchServices();
