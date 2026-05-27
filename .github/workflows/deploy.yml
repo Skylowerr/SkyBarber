@@ -1,0 +1,58 @@
+name: SkyBarber CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # PHASE 1: CONTINUOUS INTEGRATION (CI) - Run Tests
+  continuous-integration:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Base
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install Project Dependencies
+      run: |
+        cd Backend
+        npm install
+        cd ..
+        npm install
+
+    - name: Run Jest Backend Unit Tests
+      run: |
+        cd Backend
+        npm run test
+
+  # PHASE 2: CONTINUOUS DEPLOYMENT (CD) - Deploy to Vercel Cloud
+  continuous-deployment:
+    needs: continuous-integration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code Base
+      uses: actions/checkout@v4
+
+    - name: Install Vercel CLI Globally
+      run: npm install -g vercel
+
+    - name: Pull Vercel Environment Information
+      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    - name: Build and Deploy Project Artifacts to Cloud
+      run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
