@@ -23,36 +23,13 @@
                 Mİ
             </div>
             <div>
-                <h2 class="text-xl font-bold text-slate-900">Müşteri İsmi</h2>
-                <p class="text-sm text-slate-500">musteri@email.com</p>
+                <h3 id="user-display-email" class="text-xl font-bold text-slate-900">Yükleniyor...</h3>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Randevu Geçmişiniz</h3>
-            
-            <div class="space-y-4" id="appointments-list">
-                <div class="border border-slate-100 rounded-lg p-4 flex flex-wrap justify-between items-center bg-indigo-50/40">
-                    <div>
-                        <span class="inline-block bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-semibold mb-2">Yaklaşan</span>
-                        <h4 class="font-bold text-slate-900">Saç Kesimi & Yıkama</h4>
-                        <p class="text-sm text-slate-600 mt-1">Berber: Ahmet Yılmaz</p>
-                        <p class="text-xs text-slate-500 mt-0.5">25 Mayıs 2026 - Saat: 14:00</p>
-                    </div>
-                    <button class="mt-4 sm:mt-0 text-sm font-semibold text-red-600 hover:text-red-700 transition">İptal Et</button>
-                </div>
-
-                <div class="border border-slate-100 rounded-lg p-4 flex flex-wrap justify-between items-center opacity-75">
-                    <div>
-                        <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full font-semibold mb-2">Tamamlandı</span>
-                        <h4 class="font-bold text-slate-900">Sakal Tıraşı</h4>
-                        <p class="text-sm text-slate-600 mt-1">Berber: Caner Demir</p>
-                        <p class="text-xs text-slate-500 mt-0.5">12 Nisan 2026 - Saat: 11:30</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="my-appointments-list" class="space-y-4"></div>
     </main>
-
+    
+    <script src="js/profile.js"></script>
 </body>
 </html>

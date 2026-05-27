@@ -6,6 +6,8 @@
     <title>SkyBarber | Online Randevu</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
+
 <body class="bg-slate-50 text-slate-800 font-sans">
 
     <nav class="bg-white shadow-sm border-b border-slate-200 py-4 px-6 flex justify-between items-center">
@@ -53,7 +55,35 @@
                 </div>
             </div>
         </div>
+
+        <div id="appointment-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 relative">
+                <button onclick="document.getElementById('appointment-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl cursor-pointer">&times;</button>
+                
+                <h3 id="modal-service-name" class="text-xl font-bold text-slate-900 mb-1">Hizmet Adı</h3>
+                <p id="modal-service-price" class="text-sm font-semibold text-indigo-600 mb-6">0 TL</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Randevu Tarihi Seçin</label>
+                        <input type="date" id="appointment-date" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Müsait Çalışma Saatleri</label>
+                        <div id="time-slots-grid" class="grid grid-cols-3 gap-2">
+                            </div>
+                    </div>
+                    
+                    <button id="btn-confirm-appointment" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition mt-4 cursor-pointer">
+                        Randevuyu Onayla ve Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
+
+    
 
     <script src="js/main.js"></script>
 </body>

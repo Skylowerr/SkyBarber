@@ -1,28 +1,43 @@
 const API_URL = 'http://localhost:3000/api/services';
+const APPOINTMENT_URL = 'http://localhost:3000/api/appointments';
 
 document.addEventListener('DOMContentLoaded', () => {
     const servicesGrid = document.getElementById('services-grid');
-    const searchInput = document.getElementById('search-input'); // HTML'deki arama inputunun id'si
-    const sortSelect = document.getElementById('sort-select');   // HTML'deki sıralama select'inin id'si
-    const btnSearch = document.getElementById('btn-search');     // Ara butonu
+    const searchInput = document.getElementById('search-input');
+    const sortSelect = document.getElementById('sort-select');
+    const btnSearch = document.getElementById('btn-search');
 
-    // 1. Hizmetleri Backend'den Çeken Fonksiyon
+    // Modal Elementleri
+    const modal = document.getElementById('appointment-modal');
+    const modalTitle = document.getElementById('modal-service-name');
+    const modalPrice = document.getElementById('modal-service-price');
+    const appointmentDateInput = document.getElementById('appointment-date');
+    const timeSlotsGrid = document.getElementById('time-slots-grid');
+    const btnConfirm = document.getElementById('btn-confirm-appointment');
+
+    let selectedService = null;
+    let selectedTime = null;
+
+    // Çalışma Saatleri Listesi
+    const workingHours = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+
+    // Bugünün tarihini takvimde minimum tarih yap (Geçmişe randevu alınamasın)
+    if(appointmentDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        appointmentDateInput.min = today;
+    }
+
+    // 1. Hizmetleri Çek ve Listele
     async function fetchServices() {
         try {
             const searchValue = searchInput ? searchInput.value : '';
             const sortValue = sortSelect ? sortSelect.value : '';
-
-            // Backend'e arama ve sıralama parametrelerini query string olarak gönderiyoruz
             const response = await fetch(`${API_URL}?search=${searchValue}&sortBy=${sortValue}`);
             const services = await response.json();
 
-            if (!response.ok) throw new Error('Hizmetler yüklenirken bir hata oluştu.');
-
-            // Grid'in içini temizle ve dinamik verileri bas
             servicesGrid.innerHTML = '';
-            
             if (services.length === 0) {
-                servicesGrid.innerHTML = `<p class="text-slate-500 text-center col-span-3 py-8">Aradığınız kriterlere uygun hizmet bulunamadı.</p>`;
+                servicesGrid.innerHTML = `<p class="text-slate-500 text-center col-span-3 py-8">Hizmet bulunamadı.</p>`;
                 return;
             }
 
@@ -32,39 +47,132 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">${service.name}</h3>
-                        <p class="text-sm text-slate-500 mt-1">Modern ve tarzınıza uygun kesim.</p>
+                        <p class="text-sm text-slate-500 mt-1">Profesyonel berber hizmeti.</p>
                     </div>
                     <div class="mt-6 flex justify-between items-center">
                         <span class="text-xl font-semibold text-slate-900">${service.price} TL</span>
-                        <button class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-100 transition">
+                        <button onclick="openAppointmentModal('${service.id}', '${service.name}', ${service.price})" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition cursor-pointer">
                             Randevu Seç
                         </button>
                     </div>
                 `;
                 servicesGrid.appendChild(card);
             });
-
         } catch (error) {
-            console.error('Hata:', error);
-            servicesGrid.innerHTML = `<p class="text-red-500 text-center col-span-3 py-8">Hizmetler yüklenirken bir sorun oluştu.</p>`;
+            console.error(error);
         }
     }
 
-    // 2. Olay Dinleyicileri (Event Listeners)
-    if (btnSearch) {
-        btnSearch.addEventListener('click', fetchServices);
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') fetchServices();
+    // 2. Randevu Seçim Modalı Açma
+    window.openAppointmentModal = (id, name, price) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Randevu alabilmek için lütfen önce giriş yapın!');
+            window.location.href = 'auth.html';
+            return;
+        }
+
+        selectedService = { id, name, price };
+        selectedTime = null;
+        modalTitle.innerText = name;
+        modalPrice.innerText = `${price} TL`;
+        appointmentDateInput.value = '';
+        timeSlotsGrid.innerHTML = '<p class="text-xs text-slate-400 col-span-3">Lütfen önce bir tarih seçin.</p>';
+        modal.classList.remove('hidden');
+    };
+
+    // 3. Tarih Seçildiğinde Dolu Saatleri Kontrol Etme
+    // Frontend/js/main.js içindeki ilgili alanı bu mantıkla güncelle:
+if (appointmentDateInput) {
+    appointmentDateInput.addEventListener('change', async () => {
+        const date = appointmentDateInput.value;
+        if (!date) return;
+
+        try {
+            const response = await fetch(`${APPOINTMENT_URL}/occupied?date=${date}`);
+            const occupiedTimes = await response.json();
+
+            timeSlotsGrid.innerHTML = '';
+            selectedTime = null;
+
+            // Geçmiş saatleri kontrol etmek için şimdiki zamanı alıyoruz
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const currentHourStr = now.toTimeString().split(' ')[0].substring(0, 5); // Örn: "15:51"
+
+            workingHours.forEach(hour => {
+                const btn = document.createElement('button');
+                btn.innerText = hour;
+                btn.className = 'p-2 text-sm font-medium border rounded-lg text-center transition cursor-pointer ';
+                
+                // Kural 1: Saat veritabanında dolu mu?
+                const isOccupied = occupiedTimes.includes(hour);
+                
+                // Kural 2: Seçilen gün bugünse ve döngüdeki saat şu anki zamandan geride mi kalmış?
+                const isPastHour = (date === todayStr && hour < currentHourStr);
+
+                if (isOccupied || isPastHour) {
+                    // İki durumdan biri geçerliyse butonu kırmızı yap ve kilitle
+                    btn.className += 'bg-red-50 text-red-400 border-red-100 cursor-not-allowed';
+                    btn.disabled = true;
+                } else {
+                    btn.className += 'bg-slate-50 text-slate-700 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50';
+                    btn.onclick = () => {
+                        document.querySelectorAll('#time-slots-grid button:not(:disabled)').forEach(b => {
+                            b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                            b.classList.add('bg-slate-50', 'text-slate-700');
+                        });
+                        btn.classList.remove('bg-slate-50', 'text-slate-700');
+                        btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                        selectedTime = hour;
+                    };
+                }
+                timeSlotsGrid.appendChild(btn);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    });
+}
+
+    // 4. Randevuyu Onaylama ve Sunucuya Gönderme
+    if (btnConfirm) {
+        btnConfirm.addEventListener('click', async () => {
+            const date = appointmentDateInput.value;
+            const customerEmail = localStorage.getItem('userEmail') || 'musteri@gmail.com';
+
+            if (!date || !selectedTime) {
+                alert('Lütfen tarih ve saat seçimini tamamlayın!');
+                return;
+            }
+
+            try {
+                const response = await fetch(APPOINTMENT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        serviceId: selectedService.id,
+                        serviceName: selectedService.name,
+                        price: selectedService.price,
+                        date,
+                        time: selectedTime,
+                        customerEmail
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Randevu oluşturulamadı.');
+
+                alert('Tebrikler! Randevunuz başarıyla alındı.');
+                modal.classList.add('hidden');
+            } catch (error) {
+                alert(error.message);
+            }
         });
     }
 
-    if (sortSelect) {
-        sortSelect.addEventListener('change', fetchServices);
-    }
-
-    // Sayfa ilk açıldığında verileri getir
+    if (btnSearch) btnSearch.addEventListener('click', fetchServices);
+    if (sortSelect) sortSelect.addEventListener('change', fetchServices);
     fetchServices();
 });
