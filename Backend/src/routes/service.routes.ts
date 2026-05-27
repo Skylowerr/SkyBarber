@@ -1,15 +1,14 @@
 import { Router } from 'express';
 import { getServices, createService, updateService, deleteService } from '../controllers/service.controller';
-import { authenticateToken, requireAdmin } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-// Herkese açık rotalar (Arama ve listeleme için)
+// /api/services root adresine gelen istekler
 router.get('/', getServices);
+router.post('/', createService);
 
-// Korumalı Admin rotaları (CRUD)
-router.post('/', authenticateToken, requireAdmin, createService);
-router.put('/:id', authenticateToken, requireAdmin, updateService);
-router.delete('/:id', authenticateToken, requireAdmin, deleteService);
+// ID parametresi ile gelen istekler
+router.put('/:id', updateService);
+router.delete('/:id', deleteService);
 
 export default router;

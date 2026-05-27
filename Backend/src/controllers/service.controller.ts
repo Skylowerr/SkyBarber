@@ -37,20 +37,35 @@ export const getServices = async (req: Request, res: Response) => {
 };
 
 // Yeni Hizmet Oluşturma (Create)
+// Backend/src/controllers/service.controller.ts içindeki createService kısmını bu kodla değiştir:
 export const createService = async (req: Request, res: Response) => {
     const { name, price } = req.body;
     try {
+        // 1. Gelen verilerin doğruluğunu kontrol et
+        if (!name || !price) {
+            return res.status(400).json({ error: 'Hizmet adı ve fiyatı alanları zorunludur.' });
+        }
+
+        // 2. Firebase için benzersiz bir doküman referansı oluştur
         const newServiceRef = db.collection('services').doc();
+        
         const serviceData = {
-            name,
-            price: Number(price),
+            id: newServiceRef.id, // Kolay silme/düzenleme için ID'yi içine ekliyoruz
+            name: String(name).trim(),
+            price: Number(price),  // Kesinlikle sayı formatına çeviriyoruz
             created_at: new Date().toISOString()
         };
 
+        // 3. Veriyi Firestore'a kaydet
         await newServiceRef.set(serviceData);
-        res.status(201).json({ id: newServiceRef.id, ...serviceData });
-    } catch (err) {
-        res.status(500).json({ error: 'Hizmet eklenemedi.' });
+
+        // 4. Başarılı sonucu frontend'e fırlat
+        return res.status(201).json(serviceData);
+
+    } catch (err: any) {
+        // Hatanın ne olduğunu VS Code terminalinde görebilmek için logluyoruz
+        console.error("Firebase Hizmet Ekleme Hatası:", err);
+        return res.status(500).json({ error: 'Firebase veri yazma hatası: ' + err.message });
     }
 };
 

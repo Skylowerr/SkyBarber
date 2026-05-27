@@ -3,57 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyBarber | Admin Panel</title>
+    <title>SkyBarber - Admin Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-    <nav class="bg-slate-900 text-white py-4 px-6 flex justify-between items-center">
-        <a href="index.html" class="text-xl font-bold tracking-wide text-indigo-400">SkyBarber Yönetim</a>
-        <a href="index.html" class="text-sm text-slate-300 hover:text-white transition">Müşteri Sayfası →</a>
-    </nav>
-
-    <main class="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit">
-            <h2 class="text-lg font-bold text-slate-900 mb-4" id="form-title">Yeni Hizmet Ekle</h2>
-            <form id="service-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Hizmet Adı</label>
-                    <input type="text" id="service-name" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Fiyat (TL)</label>
-                    <input type="number" id="service-price" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Kaydet</button>
-            </form>
-        </div>
-
-        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Mevcut Hizmetler</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-200 text-sm font-medium text-slate-500">
-                            <th class="pb-3">Hizmet</th>
-                            <th class="pb-3">Fiyat</th>
-                            <th class="pb-3 text-right">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-services-list" class="divide-y divide-slate-100 text-sm">
-                        <tr>
-                            <td class="py-3 font-medium text-slate-900">Saç Kesimi</td>
-                            <td class="py-3 text-slate-600">250 TL</td>
-                            <td class="py-3 text-right space-x-2">
-                                <button class="text-indigo-600 hover:underline">Düzenle</button>
-                                <button class="text-red-600 hover:underline">Sil</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <nav class="bg-white border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">SkyBarber</span>
+                <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-indigo-100">Admin</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">Ana Sayfaya Git</a>
+                <button onclick="localStorage.clear(); window.location.href='auth.html';" class="text-sm font-medium text-red-600 hover:text-red-700 transition">Çıkış Yap</button>
             </div>
         </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto mt-10 px-4 mb-16">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1">
+                <h2 class="text-lg font-bold text-slate-900 mb-4">Yeni Hizmet Yönetimi</h2>
+                
+                <form id="add-service-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Hizmet Adı</label>
+                        <input type="text" id="service-name" required placeholder="Örn: Saç & Sakal Kesimi" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Fiyat (TL)</label>
+                        <input type="number" id="service-price" required placeholder="Örn: 250" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition cursor-pointer">
+                        Hizmet Ekle
+                    </button>
+                </form>
+            </div>
+
+            <div class="md:col-span-2">
+                <h2 class="text-lg font-bold text-slate-900 mb-4">Aktif Hizmet Listesi</h2>
+                
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                                <th class="py-3.5 px-6">Hizmet Adı</th>
+                                <th class="py-3.5 px-6">Fiyat</th>
+                                <th class="py-3.5 px-6 text-right">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-services-list" class="divide-y divide-slate-100">
+                            <tr class="loading-row">
+                                <td colspan="3" class="text-center py-8 text-sm text-slate-400">Veritabanından hizmetler yükleniyor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
     </main>
 
     <script src="js/admin.js"></script>
