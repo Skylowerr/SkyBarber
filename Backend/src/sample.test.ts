@@ -1,44 +1,42 @@
-// 1. Test Edeceğimiz Yardımcı Fonksiyonlar (Gerçek hayatta controller veya helper içindedir)
-// Berber fiyatlarının geçerli olup olmadığını kontrol eden fonksiyon
+// 1. Helper Functions to Test Business Logic
 function isValidServicePrice(price: any): boolean {
     const num = Number(price);
-    return !isNaN(num) && num > 0 && num <= 5000; // Fiyat negatif olamaz, mantıksız yüksek olamaz
+    return !isNaN(num) && num > 0 && num <= 5000; // Prices must be positive and within a realistic range
 }
 
-// Seçilen saatin çalışma saatleri (09:00 - 17:00) arasında olup olmadığını kontrol eden fonksiyon
 function isWorkingHour(time: string): boolean {
     const workingHours = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
     return workingHours.includes(time);
 }
 
-// 2. JEST TEST SENARYOLARI
-describe('SkyBarber Backend - İş Mantığı ve Veri Doğrulama Birim Testleri', () => {
+// 2. JEST TEST SUITE
+describe('SkyBarber Backend - Business Logic & Data Validation Unit Tests', () => {
 
-    // A) Hizmet Fiyat Yönetimi Testleri
-    describe('Hizmet Fiyat Doğrulama Modülü', () => {
-        it('Geçerli bir berber hizmeti fiyatını onaylamalıdır (Örn: 250 TL)', () => {
+    // A) Service Price Validation Tests
+    describe('Service Price Validation Module', () => {
+        it('should accept valid service prices (e.g., 250 TL)', () => {
             expect(isValidServicePrice(250)).toBe(true);
-            expect(isValidServicePrice("150")).toBe(true); // String gelse bile sayıya dönebilmeli
+            expect(isValidServicePrice("150")).toBe(true); // Should parse string numbers correctly
         });
 
-        it('Negatif, sıfır veya geçersiz fiyat değerlerini reddetmelidir', () => {
+        it('should reject negative, zero, or invalid price values', () => {
             expect(isValidServicePrice(-50)).toBe(false);
             expect(isValidServicePrice(0)).toBe(false);
-            expect(isValidServicePrice("bedava")).toBe(false);
+            expect(isValidServicePrice("free")).toBe(false);
         });
     });
 
-    // B) Randevu Saat Yönetimi Testleri
-    describe('Randevu Saat Validasyon Modülü', () => {
-        it('Berber çalışma saatleri içindeki randevu taleplerini kabul etmelidir', () => {
+    // B) Appointment Hours Validation Tests
+    describe('Appointment Time Slot Validation Module', () => {
+        it('should accept appointment requests within official working hours', () => {
             expect(isWorkingHour("09:00")).toBe(true);
             expect(isWorkingHour("14:00")).toBe(true);
         });
 
-        it('Çalışma saatleri dışındaki (gece veya öğle arası) randevu taleplerini reddetmelidir', () => {
-            expect(isWorkingHour("22:00")).toBe(false); // Gece dükkan kapalı
-            expect(isWorkingHour("12:00")).toBe(false); // Öğle arası mola saati
-            expect(isWorkingHour("08:30")).toBe(false); // Dükkan henüz açılmadı
+        it('should reject appointment requests outside working hours (night or lunch breaks)', () => {
+            expect(isWorkingHour("22:00")).toBe(false); // Shop is closed at night
+            expect(isWorkingHour("12:00")).toBe(false); // Lunch break slot
+            expect(isWorkingHour("08:30")).toBe(false); // Shop has not opened yet
         });
     });
 
