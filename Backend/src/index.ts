@@ -11,7 +11,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware Ayarları
-app.use(cors());
+app.use(cors({
+    origin: ['https://skybarber-web.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json()); // req.body'nin okunabilmesi için en kritik satır!
 app.use(express.urlencoded({ extended: true }));
 
