@@ -2,6 +2,12 @@ const API_URL = 'https://sky-barber-alpha.vercel.app/api/services';
 const APPOINTMENT_URL = 'https://sky-barber-alpha.vercel.app/api/appointments';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    
+    // Eğer token yoksa (kullanıcı giriş yapmamışsa) login sayfasına postala
+    if (!token) {
+        window.location.replace('auth.html');
+    }
     const servicesGrid = document.getElementById('services-grid');
     const searchInput = document.getElementById('search-input');
     const sortSelect = document.getElementById('sort-select');
