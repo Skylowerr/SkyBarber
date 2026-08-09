@@ -21,6 +21,12 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/appointments', appointmentRoutes); // <-- Eklendi
 
 // Sunucuyu Başlatma
-app.listen(PORT, () => {
-    console.log(`Sunucu ${PORT} portunda aktif.`);
-});
+// SADECE BİLGİSAYARINDA ÇALIŞIRKEN PORTU DİNLE
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Sunucu ${PORT} portunda aktif kanka!`);
+    });
+}
+
+// VERCEL İÇİN UYGULAMAYI DIŞARI AKTAR
+export default app;
