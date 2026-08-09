@@ -1,4 +1,4 @@
-const APPOINTMENT_URL = 'http://localhost:3000/api/appointments';
+const APPOINTMENT_URL = 'https://sky-barber-alpha.vercel.app/api/appointments';
 
 document.addEventListener('DOMContentLoaded', () => {
     const userDisplayEmail = document.getElementById('user-display-email');

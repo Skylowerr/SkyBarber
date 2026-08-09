@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:3000/api/services';
-const APPOINTMENT_URL = 'http://localhost:3000/api/appointments';
+const API_URL = 'https://sky-barber-alpha.vercel.app/api/services';
+const APPOINTMENT_URL = 'https://sky-barber-alpha.vercel.app/api/appointments';
 
 document.addEventListener('DOMContentLoaded', () => {
     const servicesGrid = document.getElementById('services-grid');

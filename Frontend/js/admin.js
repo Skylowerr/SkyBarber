@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/services';
+const API_URL = 'https://sky-barber-alpha.vercel.app/api/services';
 
 document.addEventListener('DOMContentLoaded', () => {
     const adminServicesList = document.getElementById('admin-services-list');
